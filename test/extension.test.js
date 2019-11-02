@@ -10,12 +10,8 @@ before(async () => {
 });
 
 describe('extension', function () {
-  it('linkQuery正常', async () => {
-    const res = await TestConn.linkQuery({}).toArray();
-    assert.notEqual(res, null)
-  });
   it('fetch正常', async () => {
     const res = await TestConn.linkQuery({}).fetch();
-    assert.notEqual(res, undefined)
-  })
+    assert.ok(!!res)
+  });
 });

@@ -17,8 +17,6 @@ describe('addLink', function () {
         field: 'a',
         type: 'one',
         index: true,
-        unique: 1,
-        sparse: true,
       },
     });
 
