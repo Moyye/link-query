@@ -63,13 +63,39 @@ describe('linkQuery', function () {
         type: 'one',
         index: true,
       },
+      testLink1: {
+        collection: 'link',
+        field: 'linkId',
+        type: 'one',
+        index: true,
+      },
+      testLink2: {
+        collection: 'link',
+        field: 'linkId',
+        type: 'one',
+        index: true,
+      },
+      testLink3: {
+        collection: 'link',
+        field: 'linkId',
+        type: 'one',
+        index: true,
+      },
     });
 
     const res = await TestConn.linkQuery({
       $options: {
-        limit: 1,
       },
       testLink: {
+        b: 1
+      },
+      testLink1: {
+        b: 1
+      },
+      testLink2: {
+        b: 1
+      },
+      testLink3: {
         b: 1
       }
     }).fetch();
