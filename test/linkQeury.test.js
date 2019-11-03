@@ -1,4 +1,5 @@
 const assert = require('assert');
+const _ = require('lodash');
 require('../index');
 const getCollectionByName = require('./db');
 
@@ -134,5 +135,72 @@ describe('linkQuery', function () {
     }).fetch();
 
     assert.ok(res[0].link.test.link)
+  });
+
+  it('link fetchOne 正常', async () => {
+    TestConn.removeLinks();
+
+    TestConn.addLinks({
+      link: {
+        collection: LinkConn,
+        field: 'linkId',
+        type: 'one',
+        index: true,
+      },
+    });
+
+    const res = await TestConn.linkQuery({
+      $options: {},
+      link: {},
+    }).fetchOne();
+
+    assert.ok(_.isObject(res));
+    assert.ok(!_.isArray(res))
+  });
+
+
+  it('link fetchAll 正常', async () => {
+    TestConn.removeLinks();
+
+    TestConn.addLinks({
+      link: {
+        collection: LinkConn,
+        field: 'linkId',
+        type: 'one',
+        index: true,
+      },
+    });
+
+    const res = await TestConn.linkQuery({
+      $options: {},
+      link: {},
+    }).fetchAll();
+
+    assert.ok(_.isArray(res))
+  });
+
+  it('link count 正常', async () => {
+    TestConn.removeLinks();
+
+    TestConn.addLinks({
+      link: {
+        collection: LinkConn,
+        field: 'linkId',
+        type: 'one',
+        index: true,
+      },
+    });
+
+    const res = await TestConn.linkQuery({
+      $options: {},
+      link: {},
+    }).fetchAll();
+
+    const count = await TestConn.linkQuery({
+      $options: {},
+      link: {},
+    }).count();
+
+    assert.ok(res.length === count)
   })
 });
