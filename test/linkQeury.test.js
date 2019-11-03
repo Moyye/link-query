@@ -97,7 +97,7 @@ describe('linkQuery', function () {
       },
       testLink3: {
         b: 1
-      }
+      },
     }).fetch();
     assert.ok(res[0].linkId.toString() === res[0].testLink._id.toString())
   })
