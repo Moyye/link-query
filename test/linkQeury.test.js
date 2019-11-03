@@ -9,7 +9,8 @@ before(async () => {
   TestConn = await getCollectionByName('test');
   LinkConn = await getCollectionByName('link');
   const { insertedId } = await LinkConn.insertOne({ b: 1 });
-  await TestConn.insertOne({ a: 1, linkId: insertedId })
+  const { insertedId: testId } = await TestConn.insertOne({ a: 1, linkId: insertedId });
+  await LinkConn.updateOne({ _id: insertedId }, { $set: { testId: testId } })
 });
 
 describe('linkQuery', function () {
@@ -58,25 +59,25 @@ describe('linkQuery', function () {
   it('link单层正常', async () => {
     TestConn.addLinks({
       testLink: {
-        collection: 'link',
+        collection: LinkConn,
         field: 'linkId',
         type: 'one',
         index: true,
       },
       testLink1: {
-        collection: 'link',
+        collection: LinkConn,
         field: 'linkId',
         type: 'one',
         index: true,
       },
       testLink2: {
-        collection: 'link',
+        collection: LinkConn,
         field: 'linkId',
         type: 'one',
         index: true,
       },
       testLink3: {
-        collection: 'link',
+        collection: LinkConn,
         field: 'linkId',
         type: 'one',
         index: true,
@@ -84,8 +85,7 @@ describe('linkQuery', function () {
     });
 
     const res = await TestConn.linkQuery({
-      $options: {
-      },
+      $options: {},
       testLink: {
         b: 1
       },
@@ -100,5 +100,39 @@ describe('linkQuery', function () {
       },
     }).fetch();
     assert.ok(res[0].linkId.toString() === res[0].testLink._id.toString())
+  });
+
+  it('link多层嵌套层正常', async () => {
+    TestConn.removeLinks();
+    LinkConn.removeLinks();
+
+    TestConn.addLinks({
+      link: {
+        collection: LinkConn,
+        field: 'linkId',
+        type: 'one',
+        index: true,
+      },
+    });
+
+    LinkConn.addLinks({
+      test: {
+        collection: TestConn,
+        field: 'testId',
+        type: 'one',
+        index: true,
+      },
+    });
+
+    const res = await TestConn.linkQuery({
+      $options: {},
+      link: {
+        test: {
+          link: {}
+        }
+      },
+    }).fetch();
+
+    assert.ok(res[0].link.test.link)
   })
 });

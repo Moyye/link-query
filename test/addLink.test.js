@@ -13,7 +13,7 @@ describe('addLink', function () {
   it('添加属性正常', async () => {
     TestConn.addLinks({
       testLink: {
-        collection: 'test2',
+        collection: TestConn,
         field: 'a',
         type: 'one',
         index: true,
