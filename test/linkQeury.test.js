@@ -4,9 +4,12 @@ const getCollectionByName = require('./db');
 
 
 let TestConn;
+let LinkConn;
 before(async () => {
   TestConn = await getCollectionByName('test');
-  await TestConn.insertOne({ a: 1 })
+  LinkConn = await getCollectionByName('link');
+  const { insertedId } = await LinkConn.insertOne({ b: 1 });
+  await TestConn.insertOne({ a: 1, linkId: insertedId })
 });
 
 describe('linkQuery', function () {
@@ -50,5 +53,26 @@ describe('linkQuery', function () {
     }).fetch();
 
     assert.ok((res1.length - res2.length) === 1)
+  });
+
+  it('link单层正常', async () => {
+    TestConn.addLinks({
+      testLink: {
+        collection: 'link',
+        field: 'linkId',
+        type: 'one',
+        index: true,
+      },
+    });
+
+    const res = await TestConn.linkQuery({
+      $options: {
+        limit: 1,
+      },
+      testLink: {
+        b: 1
+      }
+    }).fetch();
+    assert.ok(res[0].linkId.toString() === res[0].testLink._id.toString())
   })
 });
