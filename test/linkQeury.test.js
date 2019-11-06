@@ -90,6 +90,7 @@ describe('linkQuery', function () {
       testLink: {
         b: 1
       },
+      linkId: 1,
       testLink1: {
         b: 1
       },

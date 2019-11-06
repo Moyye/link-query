@@ -6,15 +6,22 @@ const getCollectionByName = require('./db');
 let PeopleConn;
 let BlogConn;
 before(async function () {
-  PeopleConn = await getCollectionByName('people');
-  BlogConn = await getCollectionByName('blog');
+  PeopleConn = await getCollectionByName('people_meta');
+  BlogConn = await getCollectionByName('blog_meta');
   const { insertedIds } = await BlogConn.insertMany([
     { title: `blogTitle ${ new Date() }` },
     { title: `blogTitle ${ new Date() }` },
     { title: `blogTitle ${ new Date() }` },
     { title: `blogTitle ${ new Date() }` },
   ]);
-  await PeopleConn.insertOne({ name: `name ${ new Date() }`, blogIds: Object.values(insertedIds) });
+  await PeopleConn.insertOne({
+    name: `name ${ new Date() }`, blog: Object.values(insertedIds).map((id) => {
+      return {
+        _id: id,
+        name: `testLinkName ${ id.toString() }`
+      }
+    })
+  });
 });
 
 describe('linkQuery many', function () {
@@ -23,11 +30,10 @@ describe('linkQuery many', function () {
     BlogConn.removeLinks();
 
     PeopleConn.addLinks({
-      blog: {
+      blogs: {
         collection: BlogConn,
-        field: 'blogIds',
-        type: 'many',
-        index: true,
+        type: 'meta',
+        field: 'blog._id',
       },
     });
 
@@ -35,12 +41,12 @@ describe('linkQuery many', function () {
       $options: {
         sort: { _id: -1 }
       },
-      blogIds: 1,
-      blog: {
+      blog: 1,
+      blogs: {
         title: 1
       },
     }).fetchOne();
 
-    assert.ok(res.blogIds.length === res.blog.length)
+    assert.ok(res.blogs.length === res.blog.length)
   });
 });
