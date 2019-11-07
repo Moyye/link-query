@@ -24,8 +24,8 @@ before(async function () {
   });
 });
 
-describe('linkQuery many', function () {
-  it('link many正常', async () => {
+describe('linkQuery meta', function () {
+  it('link meta正常', async () => {
     PeopleConn.removeLinks();
     BlogConn.removeLinks();
 

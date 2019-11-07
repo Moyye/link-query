@@ -1,2 +1,2 @@
 require('./lib/extension');
-require('./lib/addLink');
+require('./lib/fetch');
