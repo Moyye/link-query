@@ -14,7 +14,8 @@
     "mocha": "^6.2.2"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "test-one": "npm run test -- --grep"
   },
   "repository": {
     "type": "git",
