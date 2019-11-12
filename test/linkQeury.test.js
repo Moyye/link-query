@@ -86,6 +86,11 @@ describe('linkQuery', function () {
     });
 
     const res = await TestConn.linkQuery({
+      $filters: {
+          linkId: {
+              $exists: true,
+          }
+      },
       $options: {},
       testLink: {
         b: 1
@@ -127,6 +132,11 @@ describe('linkQuery', function () {
     });
 
     const res = await TestConn.linkQuery({
+      $filters: {
+        linkId: {
+          $exists: true,
+        }
+      },
       $options: {},
       link: {
         test: {
@@ -134,7 +144,6 @@ describe('linkQuery', function () {
         }
       },
     }).fetch();
-
     assert.ok(res[0].link.test.link)
   });
 
