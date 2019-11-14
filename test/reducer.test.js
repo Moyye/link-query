@@ -1,12 +1,12 @@
-const assert = require('assert');
-const getCollectionByName = require('./db');
-require('../index');
+const assert = require('assert')
+const getCollectionByName = require('./db')
+require('../index')
 
 
 describe('Reducer test', function () {
   it('test add reducer one', async () => {
     // 1. init db connector
-    let UserConn = await getCollectionByName('user');
+    let UserConn = await getCollectionByName('user')
     // 2. add reducer
     UserConn.reducerAdd({
       fullName: {
@@ -21,7 +21,7 @@ describe('Reducer test', function () {
           } = object
           return `${firstName} ${lastName}`
         },
-      }
+      },
 
     })
     // 3. insert data
@@ -40,7 +40,7 @@ describe('Reducer test', function () {
   })
   it('test add reducer many', async () => {
     // 1. init db connector
-    let UserConn = await getCollectionByName('user');
+    let UserConn = await getCollectionByName('user')
     // 2. add reducer
     UserConn.reducerAdd({
       fullName: {
@@ -68,7 +68,7 @@ describe('Reducer test', function () {
           } = object
           return `nickname $$${firstName} ${lastName}$$`
         },
-      }
+      },
     })
     // 3. insert data
     // TODO: remove insert data and add texture for test
@@ -91,6 +91,6 @@ describe('Reducer test', function () {
     users.forEach(user => {
       assert.ok(user.fullName == `${user.firstName} ${user.lastName}`)
       assert.ok(user.nickname == `nickname $$${user.firstName} ${user.lastName}$$`)
-    });
+    })
   })
-});
+})

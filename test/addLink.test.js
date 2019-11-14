@@ -1,12 +1,12 @@
-const assert = require('assert');
-require('../index');
-const getCollectionByName = require('./db');
+const assert = require('assert')
+require('../index')
+const getCollectionByName = require('./db')
 
-let TestConn;
+let TestConn
 before(async () => {
-  TestConn = await getCollectionByName('test');
+  TestConn = await getCollectionByName('test')
   await TestConn.insertOne({ a: 1 })
-});
+})
 
 describe('addLink', function () {
   it('添加属性正常', async () => {
@@ -17,8 +17,8 @@ describe('addLink', function () {
         type: 'one',
         index: true,
       },
-    });
+    })
 
     assert.equal(TestConn.linkCount(), 1)
-  });
-});
+  })
+})

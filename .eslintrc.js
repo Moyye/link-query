@@ -19,6 +19,8 @@ module.exports = exports = {
     "rules": {
         "indent": ["error", 2],
         "no-console": OFF,
+        "comma-dangle": ["error", "always-multiline"],
+        "semi": ["error", "never"],
         // // Possible Errors (overrides from recommended set)
         // "no-extra-parens": ERROR,
         // "no-unexpected-multiline": ERROR,
@@ -116,7 +118,7 @@ module.exports = exports = {
         // // We require all vars to be initialized (see init-declarations)
         // // If we NEED a var to be initialized to undefined, it needs to be explicit
         // "no-undef-init": OFF,
-        "no-undef": ERROR,
+        // "no-undef": ERROR,
         // "no-undefined": OFF,
         // "no-unused-vars": WARN,
         // // Disallow hoisting - let & const don't allow hoisting anyhow
