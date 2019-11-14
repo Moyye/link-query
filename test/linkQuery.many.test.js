@@ -19,10 +19,10 @@ before(async function () {
 
 describe('linkQuery many', function () {
   it('link many正常', async () => {
-    PeopleConn.removeLinks();
-    BlogConn.removeLinks();
+    PeopleConn.linkClear();
+    BlogConn.linkClear();
 
-    PeopleConn.addLinks({
+    PeopleConn.linkAdd({
       blog: {
         collection: BlogConn,
         field: 'blogIds',

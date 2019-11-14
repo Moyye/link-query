@@ -58,7 +58,7 @@ describe('linkQuery', function () {
   });
 
   it('link单层正常', async () => {
-    TestConn.addLinks({
+    TestConn.linkAdd({
       testLink: {
         collection: LinkConn,
         field: 'linkId',
@@ -85,7 +85,7 @@ describe('linkQuery', function () {
       },
     });
 
-    const res = await TestConn.linkQuery({
+    let res = await TestConn.linkQuery({
       $filters: {
         linkId: {
           $exists: true,
@@ -105,15 +105,16 @@ describe('linkQuery', function () {
       testLink3: {
         b: 1
       },
-    }).fetch();
+    }).fetch()
+
     assert.ok(res[0].linkId.toString() === res[0].testLink._id.toString())
   });
 
   it('link多层嵌套层正常', async () => {
-    TestConn.removeLinks();
-    LinkConn.removeLinks();
+    TestConn.linkClear();
+    LinkConn.linkClear();
 
-    TestConn.addLinks({
+    TestConn.linkAdd({
       link: {
         collection: LinkConn,
         field: 'linkId',
@@ -122,7 +123,7 @@ describe('linkQuery', function () {
       },
     });
 
-    LinkConn.addLinks({
+    LinkConn.linkAdd({
       test: {
         collection: TestConn,
         field: 'testId',
@@ -148,9 +149,9 @@ describe('linkQuery', function () {
   });
 
   it('link fetchOne 正常', async () => {
-    TestConn.removeLinks();
+    TestConn.linkClear();
 
-    TestConn.addLinks({
+    TestConn.linkAdd({
       link: {
         collection: LinkConn,
         field: 'linkId',
@@ -170,9 +171,9 @@ describe('linkQuery', function () {
 
 
   it('link fetchAll 正常', async () => {
-    TestConn.removeLinks();
+    TestConn.linkClear();
 
-    TestConn.addLinks({
+    TestConn.linkAdd({
       link: {
         collection: LinkConn,
         field: 'linkId',
@@ -190,9 +191,9 @@ describe('linkQuery', function () {
   });
 
   it('link count 正常', async () => {
-    TestConn.removeLinks();
+    TestConn.linkClear();
 
-    TestConn.addLinks({
+    TestConn.linkAdd({
       link: {
         collection: LinkConn,
         field: 'linkId',

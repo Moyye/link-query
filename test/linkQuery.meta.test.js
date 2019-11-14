@@ -26,10 +26,10 @@ before(async function () {
 
 describe('linkQuery meta', function () {
   it('link meta正常', async () => {
-    PeopleConn.removeLinks();
-    BlogConn.removeLinks();
+    PeopleConn.linkClear();
+    BlogConn.linkClear();
 
-    PeopleConn.addLinks({
+    PeopleConn.linkAdd({
       blogs: {
         collection: BlogConn,
         type: 'meta',

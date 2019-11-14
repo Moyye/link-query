@@ -8,7 +8,7 @@ describe('Reducer test', function () {
     // 1. init db connector
     let UserConn = await getCollectionByName('user');
     // 2. add reducer
-    UserConn.addReducer({
+    UserConn.reducerAdd({
       fullName: {
         body: {
           firstName: 1,
@@ -42,7 +42,7 @@ describe('Reducer test', function () {
     // 1. init db connector
     let UserConn = await getCollectionByName('user');
     // 2. add reducer
-    UserConn.addReducer({
+    UserConn.reducerAdd({
       fullName: {
         body: {
           firstName: 1,
