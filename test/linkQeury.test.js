@@ -87,9 +87,9 @@ describe('linkQuery', function () {
 
     const res = await TestConn.linkQuery({
       $filters: {
-          linkId: {
-              $exists: true,
-          }
+        linkId: {
+          $exists: true,
+        }
       },
       $options: {},
       testLink: {
