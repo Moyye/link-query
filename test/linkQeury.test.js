@@ -59,12 +59,6 @@ describe('linkQuery', function () {
 
   it('link单层正常', async () => {
     TestConn.linkAdd({
-      testLink: {
-        collection: LinkConn,
-        field: 'linkId',
-        type: 'one',
-        index: true,
-      },
       testLink1: {
         collection: LinkConn,
         field: 'linkId',
@@ -107,7 +101,7 @@ describe('linkQuery', function () {
       },
     }).fetch();
 
-    assert.ok(res[0].linkId.toString() === res[0].testLink._id.toString());
+    assert.ok(res[0].linkId.toString() === res[0].testLink1._id.toString());
   });
 
   it('link多层嵌套层正常', async () => {
