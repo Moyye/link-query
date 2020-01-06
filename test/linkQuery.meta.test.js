@@ -1,33 +1,33 @@
-const assert = require('assert')
-require('../index')
-const getCollectionByName = require('./db')
+const assert = require('assert');
+require('../index');
+const getCollectionByName = require('./db');
 
 
-let PeopleConn
-let BlogConn
+let PeopleConn;
+let BlogConn;
 before(async function () {
-  PeopleConn = await getCollectionByName('people_meta')
-  BlogConn = await getCollectionByName('blog_meta')
+  PeopleConn = await getCollectionByName('people_meta');
+  BlogConn = await getCollectionByName('blog_meta');
   const { insertedIds } = await BlogConn.insertMany([
     { title: `blogTitle ${ new Date() }` },
     { title: `blogTitle ${ new Date() }` },
     { title: `blogTitle ${ new Date() }` },
     { title: `blogTitle ${ new Date() }` },
-  ])
+  ]);
   await PeopleConn.insertOne({
     name: `name ${ new Date() }`, blog: Object.values(insertedIds).map((id) => {
       return {
         _id: id,
         name: `testLinkName ${ id.toString() }`,
-      }
+      };
     }),
-  })
-})
+  });
+});
 
 describe('linkQuery meta', function () {
   it('link meta正常', async () => {
-    PeopleConn.linkClear()
-    BlogConn.linkClear()
+    PeopleConn.linkClear();
+    BlogConn.linkClear();
 
     PeopleConn.linkAdd({
       blogs: {
@@ -35,7 +35,7 @@ describe('linkQuery meta', function () {
         type: 'meta',
         field: 'blog._id',
       },
-    })
+    });
 
     const res = await PeopleConn.linkQuery({
       $options: {
@@ -45,8 +45,8 @@ describe('linkQuery meta', function () {
       blogs: {
         title: 1,
       },
-    }).fetchOne()
+    }).fetchOne();
 
-    assert.ok(res.blogs.length === res.blog.length)
-  })
-})
+    assert.ok(res.blogs.length === res.blog.length);
+  });
+});

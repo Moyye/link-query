@@ -1,18 +1,18 @@
-const assert = require('assert')
-const _ = require('lodash')
-require('../index')
-const getCollectionByName = require('./db')
+const assert = require('assert');
+const _ = require('lodash');
+require('../index');
+const getCollectionByName = require('./db');
 
 
-let TestConn
-let LinkConn
+let TestConn;
+let LinkConn;
 before(async () => {
-  TestConn = await getCollectionByName('test')
-  LinkConn = await getCollectionByName('link')
-  const { insertedId } = await LinkConn.insertOne({ b: 1 })
-  const { insertedId: testId } = await TestConn.insertOne({ a: 1, linkId: insertedId })
-  await LinkConn.updateOne({ _id: insertedId }, { $set: { testId: testId } })
-})
+  TestConn = await getCollectionByName('test');
+  LinkConn = await getCollectionByName('link');
+  const { insertedId } = await LinkConn.insertOne({ b: 1 });
+  const { insertedId: testId } = await TestConn.insertOne({ a: 1, linkId: insertedId });
+  await LinkConn.updateOne({ _id: insertedId }, { $set: { testId: testId } });
+});
 
 describe('linkQuery', function () {
   it('sort正常', async () => {
@@ -22,40 +22,40 @@ describe('linkQuery', function () {
           _id: 1,
         },
       },
-    }).fetch()
+    }).fetch();
     const res2 = await TestConn.linkQuery({
       $options: {
         sort: {
           _id: -1,
         },
       },
-    }).fetch()
+    }).fetch();
 
-    assert.ok(res1[0]._id.toString() !== res2[0]._id.toString())
-  })
+    assert.ok(res1[0]._id.toString() !== res2[0]._id.toString());
+  });
 
   it('limit正常', async () => {
     const res = await TestConn.linkQuery({
       $options: {
         limit: 1,
       },
-    }).fetch()
+    }).fetch();
 
-    assert.ok(res.length === 1)
-  })
+    assert.ok(res.length === 1);
+  });
 
   it('skip正常', async () => {
     const res1 = await TestConn.linkQuery({
       $options: {},
-    }).fetch()
+    }).fetch();
     const res2 = await TestConn.linkQuery({
       $options: {
         skip: 1,
       },
-    }).fetch()
+    }).fetch();
 
-    assert.ok((res1.length - res2.length) === 1)
-  })
+    assert.ok((res1.length - res2.length) === 1);
+  });
 
   it('link单层正常', async () => {
     TestConn.linkAdd({
@@ -83,7 +83,7 @@ describe('linkQuery', function () {
         type: 'one',
         index: true,
       },
-    })
+    });
 
     let res = await TestConn.linkQuery({
       $filters: {
@@ -105,14 +105,14 @@ describe('linkQuery', function () {
       testLink3: {
         b: 1,
       },
-    }).fetch()
+    }).fetch();
 
-    assert.ok(res[0].linkId.toString() === res[0].testLink._id.toString())
-  })
+    assert.ok(res[0].linkId.toString() === res[0].testLink._id.toString());
+  });
 
   it('link多层嵌套层正常', async () => {
-    TestConn.linkClear()
-    LinkConn.linkClear()
+    TestConn.linkClear();
+    LinkConn.linkClear();
 
     TestConn.linkAdd({
       link: {
@@ -121,7 +121,7 @@ describe('linkQuery', function () {
         type: 'one',
         index: true,
       },
-    })
+    });
 
     LinkConn.linkAdd({
       test: {
@@ -130,7 +130,7 @@ describe('linkQuery', function () {
         type: 'one',
         index: true,
       },
-    })
+    });
 
     const res = await TestConn.linkQuery({
       $filters: {
@@ -144,12 +144,12 @@ describe('linkQuery', function () {
           link: {},
         },
       },
-    }).fetch()
-    assert.ok(res[0].link.test.link)
-  })
+    }).fetch();
+    assert.ok(res[0].link.test.link);
+  });
 
   it('link fetchOne 正常', async () => {
-    TestConn.linkClear()
+    TestConn.linkClear();
 
     TestConn.linkAdd({
       link: {
@@ -158,20 +158,20 @@ describe('linkQuery', function () {
         type: 'one',
         index: true,
       },
-    })
+    });
 
     const res = await TestConn.linkQuery({
       $options: {},
       link: {},
-    }).fetchOne()
+    }).fetchOne();
 
-    assert.ok(_.isObject(res))
-    assert.ok(!_.isArray(res))
-  })
+    assert.ok(_.isObject(res));
+    assert.ok(!_.isArray(res));
+  });
 
 
   it('link fetchAll 正常', async () => {
-    TestConn.linkClear()
+    TestConn.linkClear();
 
     TestConn.linkAdd({
       link: {
@@ -180,18 +180,18 @@ describe('linkQuery', function () {
         type: 'one',
         index: true,
       },
-    })
+    });
 
     const res = await TestConn.linkQuery({
       $options: {},
       link: {},
-    }).fetchAll()
+    }).fetchAll();
 
-    assert.ok(_.isArray(res))
-  })
+    assert.ok(_.isArray(res));
+  });
 
   it('link count 正常', async () => {
-    TestConn.linkClear()
+    TestConn.linkClear();
 
     TestConn.linkAdd({
       link: {
@@ -200,18 +200,18 @@ describe('linkQuery', function () {
         type: 'one',
         index: true,
       },
-    })
+    });
 
     const res = await TestConn.linkQuery({
       $options: {},
       link: {},
-    }).fetchAll()
+    }).fetchAll();
 
     const count = await TestConn.linkQuery({
       $options: {},
       link: {},
-    }).count()
+    }).count();
 
-    assert.ok(res.length === count)
-  })
-})
+    assert.ok(res.length === count);
+  });
+});
