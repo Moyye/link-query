@@ -2,16 +2,18 @@
   "name": "link-query",
   "version": "1.0.0",
   "description": "",
-  "main": "src/QueryBase.js",
+  "main": "dist/QueryBase.js",
   "dependencies": {
     "lodash": "^4.17.15"
   },
   "devDependencies": {
     "mocha": "^6.2.2",
-    "mongodb": "^3.3.3"
+    "mongodb": "^3.3.3",
+    "nyc": "^15.0.0"
   },
   "scripts": {
     "test": "mocha --exit",
+    "build": "parcel build ./src/QueryBase.js -d ./dist --detailed-report --no-minify --target node",
     "test-one": "npm run test -- --grep"
   },
   "repository": {

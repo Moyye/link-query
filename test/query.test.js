@@ -16,7 +16,6 @@ describe('query装饰器挂载', function () {
   });
 
   it('数据查询正常', async () => {
-
     const TestConnDecorator = decorator(TestConn, {});
     const result = await TestConnDecorator.findOne({});
     assert.notEqual(result, null);
