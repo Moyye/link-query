@@ -59,7 +59,6 @@ class QueryBase extends Function {
 }
 
 function decorator(collection, config) {
-
   const queryBase = new QueryBase(collection, config);
   const $$proxy = new Proxy(queryBase, {
     construct(target, args) {

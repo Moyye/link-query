@@ -53,12 +53,20 @@ describe('linkQuery-mongoose-正常功能', function () {
     ]);
   });
 
-  it('普通query查询正常', async () => {
-    const User = decorator(UserConn, {
+  it('query查询正常', async () => {
+    const User = decorator(UserConn);
+    const Blog = decorator(BlogConn);
+
+    User.addLinker({
       blog: {
-        collection: BlogConn,
+        collection: Blog,
         type: 'many',
         foreignField: 'userId',
+        inverse: {
+          user: {
+            type: 'one',
+          },
+        },
       },
     });
 
@@ -74,10 +82,14 @@ describe('linkQuery-mongoose-正常功能', function () {
       name: 1,
       blog: {
         title: 1,
+        user: {
+          name: 1,
+        },
       },
     }).fetchOne();
 
     assert.ok(user.blog.length > 1);
+    assert.ok(user.blog[0].user.name);
   });
 
 
