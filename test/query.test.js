@@ -59,7 +59,32 @@ describe('query.addLinker', function () {
         foreignField: 'userId',
       },
     });
+
     assert.ok(User.linkers.get('blog'));
+  });
+
+  it('inverse', async () => {
+    const User = decorator(UserConn);
+    const Blog = decorator(BlogConn);
+
+    User.addLinker({
+      blog: {
+        collection: Blog,
+        type: 'many',
+        foreignField: 'userId',
+        inverse: {
+          user: {
+            type: 'one',
+          },
+          users: {
+            type: 'many',
+          },
+        },
+      },
+    });
+
+    assert.ok(Blog.linkers.get('user'));
+    assert.ok(Blog.linkers.get('users'));
   });
 
   it('collection配置', async () => {
@@ -388,6 +413,126 @@ describe('query.linkQuery-meta', function () {
 
     assert.equal(user._id.toString(), user.blogLink[0].user._id.toString());
   });
+
+  after(async () => {
+    await UserConn.removeMany({});
+    await BlogConn.removeMany({});
+  });
+});
+
+describe('query.linkQuery-嵌套', function () {
+  let UserConn, BlogConn;
+  before(async () => {
+    [UserConn, BlogConn] = await getCollection('User', 'Blog');
+
+    const { insertedId } = await UserConn.insertOne({
+      name: 'bob',
+      sex: 'man',
+    });
+    const { insertedIds: blogIds } = await BlogConn.insertMany([
+      {
+        title: `blogTitle ${ Math.random().toString(36).substring(7) }`,
+        userId: insertedId,
+        user: { _id: insertedId },
+      },
+      {
+        title: `blogTitle ${ Math.random().toString(36).substring(7) }`,
+        userId: insertedId,
+        user: { _id: insertedId },
+      },
+      {
+        title: `blogTitle ${ Math.random().toString(36).substring(7) }`,
+        userId: insertedId,
+        user: { _id: insertedId },
+      },
+      {
+        title: `blogTitle ${ Math.random().toString(36).substring(7) }`,
+        userId: insertedId,
+        user: { _id: insertedId },
+      },
+      {
+        title: `blogTitle ${ Math.random().toString(36).substring(7) }`,
+        userId: insertedId,
+        user: { _id: insertedId },
+      },
+    ]);
+
+    UserConn.updateOne({ _id: insertedId }, {
+      $set: {
+        blog: {
+          _id: Object.values(blogIds)[0],
+        },
+      },
+    });
+  });
+
+  it('meta-one嵌套正常', async () => {
+    const Blog = decorator(BlogConn);
+    const User = decorator(UserConn);
+
+    Blog.addLinker({
+      userLink: {
+        type: 'one',
+        localField: 'user._id',
+        collection: User,
+      },
+    });
+    User.addLinker({
+      blogLink: {
+        type: 'one',
+        foreignField: 'user._id',
+        collection: Blog,
+      },
+    });
+
+    const user = await User.linkQuery({
+      name: 1,
+      blogLink: {
+        title: 1,
+        userLink: {
+          name: 1,
+          blogLink: {
+            title: 1,
+          },
+        },
+      },
+    }).fetchOne();
+
+    assert.ok(user.blogLink.userLink.blogLink.title);
+  });
+
+  it('meta-many嵌套正常', async () => {
+    const Blog = decorator(BlogConn);
+    const User = decorator(UserConn);
+
+    Blog.addLinker({
+      userLink: {
+        type: 'one',
+        localField: 'user._id',
+        collection: User,
+      },
+    });
+    User.addLinker({
+      blogLink: {
+        type: 'many',
+        foreignField: 'user._id',
+        collection: Blog,
+      },
+    });
+
+    const user = await User.linkQuery({
+      name: 1,
+      blogLink: {
+        title: 1,
+        userLink: {
+          name: 1,
+        },
+      },
+    }).fetchOne();
+
+    assert.ok(user.blogLink.map(v => assert.ok(v.userLink.name)).length > 1);
+  });
+
 
   after(async () => {
     await UserConn.removeMany({});

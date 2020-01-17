@@ -6,12 +6,13 @@ const { LINK_QUERY_PROFILE } = require('./const');
 class QueryBase {
   constructor(collection, linkConfig = {}) {
     this.delegate = collection;
-    this.isLinkQueryDelegate = true;
 
     // 存储需要关联的配置
     this.linkers = new Map();
     // 缓存虚拟字段
     this.linkersNames = [];
+    // 代理对象引用
+    this.$$proxy = null;
 
     this.addLinker(linkConfig);
   }
@@ -29,6 +30,21 @@ class QueryBase {
       const linker = new Linker(name, config);
       this.linkers.set(name, linker);
       this.linkersNames.push(name);
+
+      // 处理 inverse
+      if (config.inverse) {
+        if (!config.collection.$$proxy) {
+          throw new Error(`${ name } inverse fail, because collection hasn't been decorated yet`);
+        }
+
+        for (const inverseConfig of Object.values(config.inverse)) {
+          inverseConfig.foreignField = config.localField;
+          inverseConfig.localField = config.foreignField;
+          inverseConfig.collection = this.$$proxy;
+        }
+
+        config.collection.$$proxy.addLinker(config.inverse);
+      }
     }
   }
 
@@ -42,7 +58,8 @@ class QueryBase {
 }
 
 function decorator(collection, config) {
-  return new Proxy(new QueryBase(collection, config), {
+  const queryBase = new QueryBase(collection, config);
+  const $$proxy = new Proxy(queryBase, {
     get(target, p) {
       if (LINK_QUERY_PROFILE.includes(p)) {
         return target[p];
@@ -51,6 +68,9 @@ function decorator(collection, config) {
       return target.origin(p);
     },
   });
+  queryBase.$$proxy = $$proxy;
+
+  return $$proxy;
 }
 
 module.exports = {

@@ -19,7 +19,7 @@ class Query {
 
   async fetch() {
     // 连接准备
-    if (this.collection.isLinkQueryDelegate) {
+    if (this.collection.$$proxy) {
       this._prepareQuery();
     }
 
@@ -27,7 +27,7 @@ class Query {
     this._result = await this._originFind(query, options);
 
     // 连接查询
-    if (this.collection.isLinkQueryDelegate) {
+    if (this.collection.$$proxy) {
       await this._link();
     }
 
