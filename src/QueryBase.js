@@ -3,8 +3,9 @@ const Linker = require('./Linker');
 const Query = require('./Query');
 const { LINK_QUERY_PROFILE } = require('./const');
 
-class QueryBase {
+class QueryBase extends Function {
   constructor(collection, linkConfig = {}) {
+    super();
     this._delegate = collection;
 
     // 存储需要关联的配置
@@ -58,13 +59,16 @@ class QueryBase {
 }
 
 function decorator(collection, config) {
+
   const queryBase = new QueryBase(collection, config);
   const $$proxy = new Proxy(queryBase, {
+    construct(target, args) {
+      return new target._delegate(...args);
+    },
     get(target, p) {
       if (LINK_QUERY_PROFILE.includes(p)) {
         return target[p];
       }
-
       return target.origin(p);
     },
   });

@@ -73,7 +73,7 @@ class Linker {
       throw new Error(`in field ${ this.name }, you did not provide a collection`);
     }
 
-    ['find', 'insert', 'remove', 'update'].forEach((fc) => {
+    ['find', 'remove', 'update'].forEach((fc) => {
       if (!_.isFunction(collection[fc])) {
         throw new Error(`in field ${ this.name }, you did not provide a collection`);
       }

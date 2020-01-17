@@ -23,9 +23,11 @@ class Query {
       this._prepareQuery();
     }
 
-    const [query, options] = this._getQueryAndOptions();
-    this._result = await this._originFind(query, options);
-
+    if (!!this._collection.schema) {
+      this._result = await this._originFindForMongoose();
+    } else {
+      this._result = await this._originFindForMongodb();
+    }
     // 连接查询
     if (this._collection._$$proxy) {
       await this._link();
@@ -83,6 +85,7 @@ class Query {
       const map = new Map();
 
       result.forEach(v => {
+
         const key = _.get(v, linker.foreignField).toString();
         if (map.has(key)) {
           map.get(key).push(v);
@@ -132,12 +135,34 @@ class Query {
     return linkBody;
   }
 
-  _originFind(query, options) {
-    // TODO 区分mongodb或者mongoose
-    return this._collection.find(query, options).toArray();
+  _originFindForMongoose() {
+    let query = {};
+    let options = {};
+    let projection;
+    const body = this._body;
+
+    if (_.isObject(body['$filters'])) {
+      query = _.cloneDeep(body['$filters']);
+    }
+
+    if (_.isObject(body['$options']) && !_.isEmpty(body['$options'])) {
+      options = _.cloneDeep(body['$options']);
+    }
+
+    if (this._isFetchOne) {
+      _.set(options, 'limit', 1);
+    }
+
+    projection = Object.keys(body).filter(v => !LINK_BODY_PROFILE.includes(v));
+
+    if (this._prepareProjection) {
+      projection = projection.concat(this._prepareProjection);
+    }
+
+    return this._collection.find(query, projection.join(' '), options).lean();
   }
 
-  _getQueryAndOptions() {
+  _originFindForMongodb() {
     let query = {};
     let options = {};
     const body = this._body;
@@ -160,7 +185,7 @@ class Query {
       options.projection = options.projection.concat(this._prepareProjection);
     }
 
-    return [query, options];
+    return this._collection.find(query, options).toArray();
   }
 }
 

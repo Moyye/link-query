@@ -9,7 +9,8 @@
   "devDependencies": {
     "mocha": "^6.2.2",
     "mongodb": "^3.3.3",
-    "nyc": "^15.0.0"
+    "nyc": "^15.0.0",
+    "mongoose": "^5.8.7"
   },
   "scripts": {
     "test": "mocha --exit",
