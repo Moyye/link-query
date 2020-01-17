@@ -3,23 +3,23 @@ const { LINK_BODY_PROFILE } = require('./const');
 
 class Query {
   constructor(collection, body) {
-    this.collection = collection;
-    this.body = body;
+    this._collection = collection;
+    this._body = body;
 
-    this.isFetchOne = false; // 获取单个，返回对象而不是数组
+    this._isFetchOne = false; // 获取单个，返回对象而不是数组
     this._prepareProjection = null; // 需要提取的关联主键字段
     this._needLinksName = null; // 需要提取的关联主键字段
     this._result = [];
   }
 
   fetchOne() {
-    this.isFetchOne = true;
+    this._isFetchOne = true;
     return this.fetch();
   }
 
   async fetch() {
     // 连接准备
-    if (this.collection.$$proxy) {
+    if (this._collection._$$proxy) {
       this._prepareQuery();
     }
 
@@ -27,11 +27,11 @@ class Query {
     this._result = await this._originFind(query, options);
 
     // 连接查询
-    if (this.collection.$$proxy) {
+    if (this._collection._$$proxy) {
       await this._link();
     }
 
-    if (this.isFetchOne) {
+    if (this._isFetchOne) {
       return this._result[0];
     }
 
@@ -39,7 +39,7 @@ class Query {
   }
 
   _prepareQuery() {
-    const needLinksName = _.intersection(this.collection.linkersNames, Object.keys(this.body));
+    const needLinksName = _.intersection(this._collection._linkersNames, Object.keys(this._body));
     if (!needLinksName.length) return;
 
     this._needLinksName = needLinksName;
@@ -48,7 +48,7 @@ class Query {
     // 2、采用更简单的方法，损耗小部分性能全部提取（✔）
     this._prepareProjection = [];
     needLinksName.forEach(v => {
-      const linker = this.collection.linkers.get(v);
+      const linker = this._collection._linkers.get(v);
       this._prepareProjection.push(linker.localField);
       this._prepareProjection.push(linker.foreignField);
     });
@@ -60,7 +60,7 @@ class Query {
 
     const promises = [];
     this._needLinksName.forEach((linkName) => {
-      const linker = this.collection.linkers.get(linkName);
+      const linker = this._collection._linkers.get(linkName);
       switch (linker.type) {
         case 'one':
           promises.push(this._linkOneQuery(linkName, linker));
@@ -113,7 +113,7 @@ class Query {
   }
 
   _getLinkBody(linkName, query) {
-    const linkBody = _.cloneDeep(this.body[linkName]);
+    const linkBody = _.cloneDeep(this._body[linkName]);
 
     if (!_.isObject(linkBody)) {
       throw new Error(`${ linkName } is a link name, you should provide a linkQuery object, but get ${ linkBody }`);
@@ -134,13 +134,13 @@ class Query {
 
   _originFind(query, options) {
     // TODO 区分mongodb或者mongoose
-    return this.collection.find(query, options).toArray();
+    return this._collection.find(query, options).toArray();
   }
 
   _getQueryAndOptions() {
     let query = {};
     let options = {};
-    const body = this.body;
+    const body = this._body;
 
     if (_.isObject(body['$filters'])) {
       query = _.cloneDeep(body['$filters']);
@@ -150,7 +150,7 @@ class Query {
       options = _.cloneDeep(body['$options']);
     }
 
-    if (this.isFetchOne) {
+    if (this._isFetchOne) {
       _.set(options, 'limit', 1);
     }
 

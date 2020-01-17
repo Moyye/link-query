@@ -60,7 +60,7 @@ describe('query.addLinker', function () {
       },
     });
 
-    assert.ok(User.linkers.get('blog'));
+    assert.ok(User._linkers.get('blog'));
   });
 
   it('inverse', async () => {
@@ -83,8 +83,8 @@ describe('query.addLinker', function () {
       },
     });
 
-    assert.ok(Blog.linkers.get('user'));
-    assert.ok(Blog.linkers.get('users'));
+    assert.ok(Blog._linkers.get('user'));
+    assert.ok(Blog._linkers.get('users'));
   });
 
   it('collection配置', async () => {
