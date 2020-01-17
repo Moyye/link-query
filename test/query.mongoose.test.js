@@ -53,7 +53,7 @@ describe('linkQuery-mongoose-正常功能', function () {
     ]);
   });
 
-  it('query查询正常', async () => {
+  it('query-one-meta查询正常', async () => {
     const User = decorator(UserConn);
     const Blog = decorator(BlogConn);
 
@@ -90,6 +90,59 @@ describe('linkQuery-mongoose-正常功能', function () {
 
     assert.ok(user.blog.length > 1);
     assert.ok(user.blog[0].user.name);
+  });
+
+
+  after(async () => {
+    await UserConn.deleteMany({});
+    await BlogConn.deleteMany({});
+  });
+});
+
+describe('linkQuery-mongoose-meta正常功能', function () {
+  let UserConn, BlogConn;
+  before(async () => {
+    [UserConn, BlogConn] = await getCollection2('User', 'Blog');
+
+    const { _id } = await UserConn.create({
+      name: 'bob',
+      sex: 'man',
+    });
+    await BlogConn.insertMany([
+      { title: `blogTitle ${ Math.random().toString(36).substring(7) }`, userId: _id, user: { _id } },
+      { title: `blogTitle ${ Math.random().toString(36).substring(7) }`, userId: _id, user: { _id } },
+    ]);
+  });
+
+  it('query-one-meta查询正常', async () => {
+    const User = decorator(UserConn);
+    const Blog = decorator(BlogConn);
+
+    User.addLinker({
+      blog: {
+        collection: Blog,
+        type: 'many',
+        foreignField: 'user._id',
+        inverse: {
+          userLink: {
+            type: 'one',
+          },
+        },
+      },
+    });
+
+    const user = await User.linkQuery({
+      name: 1,
+      blog: {
+        title: 1,
+        userLink: {
+          name: 1,
+        },
+      },
+    }).fetchOne();
+
+    assert.ok(user.blog.length > 1);
+    assert.ok(user.blog[0].userLink.name);
   });
 
 
