@@ -1,0 +1,32 @@
+{
+  "name": "link-query",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/QueryBase.js",
+  "dependencies": {
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "mocha": "^6.2.2",
+    "mongodb": "^3.3.3"
+  },
+  "scripts": {
+    "test": "mocha --exit",
+    "test-one": "npm run test -- --grep"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Moyye/link-query.git"
+  },
+  "keywords": [
+    "mongo",
+    "query",
+    "link"
+  ],
+  "author": "selypan nature",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/Moyye/link-query/issues"
+  },
+  "homepage": "https://github.com/Moyye/link-query#readme"
+}
