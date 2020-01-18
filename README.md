@@ -137,33 +137,33 @@ const UserEnhance = const decorator(User);
 const BlogEnhance = const decorator(Blog);
 
 UserEnhance.addLinker({
-	blog: {
-		collection: BlogEnhance，
-		type: 'many',
-		foreignField: 'userId'
-	}
+  blog: {
+    collection: BlogEnhance,
+    type: 'many',
+    foreignField: 'userId'
+  }
 })
 BlogEnhance.addLinker({
-	user: {
-		collection: UserEnhance，
-		type: 'one',
-		localField: 'userId'
-	}
+  user: {
+    collection: UserEnhance,
+      type: 'one',
+      localField: 'userId'
+  }
 })
 
 // 使用
 UserEnhance.linkQuery({
-	name: 1,
-	blog: {
-		title: 1
-		user: {
-			name: 1,
-			address: 1,
-			blog: {
-				... // 继续嵌套
-			}
-		}
-	}
+  name: 1,
+  blog: {
+  title: 1,
+  user: {
+    name: 1,
+    address: 1,
+    blog: {
+      ... // 继续嵌套
+      }
+    }
+  }
 }).fetch()
 ```
   
@@ -171,14 +171,14 @@ UserEnhance.linkQuery({
 使用关联关系进行查询
 ```js
 const handle = UserEnhance.linkQuery({
-	$filters:{},
-	$options:{},
-	[projections]: 1,
-	[virtualFieldName]: {
-		$filters:{},
-		$options:{},
-		[projections]: 1
-	}
+  $filters:{},
+  $options:{},
+  [projections]: 1,
+  [virtualFieldName]: {
+    $filters:{},
+    $options:{},
+    [projections]: 1
+  }
 })
 
 await handle.fetch(); // 获取全部
@@ -200,27 +200,26 @@ await handle.fetchOne(); // 获取第一个
 ```js
 // 使用 
 UserEnhance.linkQuery({
-	$filters: {
-		name: "Moyye"
-	},
-	$options:{
-		limit: 1,
-		sort: {
-			createdAt: -1
-		},
-	},
-	name: 1,
-	blog: {
-		title: 1
-		user: {
-			name: 1,
-			address: 1,
-			blog: {
-				... // 继续嵌套
-			}
-		}
-	}
-}).fetch()
+  $filters: {
+    name: "Moyye"
+  },
+  $options:{
+    limit: 1,
+      sort: {
+        createdAt: -1
+      },
+  },
+  name: 1,
+  blog: {
+    title: 1,
+    user: {
+      name: 1,
+      address: 1,
+      blog: {
+        ... // 继续嵌套
+      }
+  }
+}}).fetch()
 ```
 
 ## 开发计划

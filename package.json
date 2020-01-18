@@ -1,7 +1,7 @@
 {
   "name": "link-query",
-  "version": "1.0.4",
-  "description": "A easier Multi-table Query for mongodb （专为初级前端设计）",
+  "version": "1.0.6",
+  "description": "A easier Multi-table Query (Collection-Join) for mongodb",
   "main": "dist/QueryBase.js",
   "dependencies": {
     "lodash": "^4.17.15"
