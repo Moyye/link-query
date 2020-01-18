@@ -1,7 +1,7 @@
 {
   "name": "link-query",
-  "version": "0.2.0",
-  "description": "",
+  "version": "1.0.4",
+  "description": "A easier Multi-table Query for mongodb （专为初级前端设计）",
   "main": "dist/QueryBase.js",
   "dependencies": {
     "lodash": "^4.17.15"
@@ -15,7 +15,8 @@
   "scripts": {
     "test": "mocha --exit",
     "build": "parcel build ./src/QueryBase.js -d ./dist --detailed-report --no-minify --target node",
-    "test-one": "npm run test -- --grep"
+    "test-one": "npm run test -- --grep",
+    "publish:npm": "yarn build && npm publish"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,9 @@
   },
   "keywords": [
     "mongo",
+    "mongodb",
+    "mongoose",
+    "jion",
     "query",
     "link"
   ],
